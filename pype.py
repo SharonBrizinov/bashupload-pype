@@ -28,15 +28,16 @@ import hashlib
 
 # SETTINGS BEGIN
 settings = {}
-settings["url"] = "https://pype.sellan.fr"
+settings["url"] = "http://URL"
 settings["listen_address"] = "0.0.0.0"
 settings["port"] = 80
 settings["directory"] = "/tmp"
 settings["delete_limit"] = 24  # hours
-settings["cleaning_interval"] = 1  # hours
+settings["cleaning_interval"] = 24  # hours
 settings["id_length"] = 2  # bytes
-settings["max_name_length"] = 64  # chars
-settings["max_file_size"] =  (10*1000*1000*1000)  # bytes
+settings["max_name_length"] = 200  # chars
+settings["max_file_size"] =  (5 * 1024*1024*1024)  # 5gb
+SECRET = "SECRET111222"
 # SETTINGS END
 
 def settings_initialisation():
@@ -93,19 +94,19 @@ class request_handler(BaseHTTPRequestHandler):
         self.file_path = directory+[path_digest]
 
         if len(self.request_path) > 0:
-            if self.request_path[0] == "help":
+            if self.request_path[0] == SECRET+"help":
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
                 with open(settings["current_directory"]+'/'+'help.txt', 'r') as help_file:
                     self.wfile.write(str.encode(help_file.read().replace("[url]", settings["url"])+"\n"))
-            elif self.request_path[0] == "install":
+            elif self.request_path[0] == SECRET+"install":
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
                 with open(settings["current_directory"]+'/'+'alias.sh', 'r') as alias_file:
                     self.wfile.write(str.encode(alias_file.read().replace("[url]", settings["url"])+"\n"))
-            elif self.request_path[0] == "Github-ribbon.png":
+            elif self.request_path[0] == SECRET+"Github-ribbon.png":
                 with open(settings["current_directory"]+'/'+'Github-ribbon.png', 'rb') as image:
                     self.send_response(200)
                     self.send_header('Content-type', 'image/png')
@@ -144,21 +145,21 @@ class request_handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.response = "File not found \n"
                 self.wfile.write(str.encode(self.response))
-        else:
-            if "curl" in self.headers['User-Agent'].lower():
-                self.send_response(200)
-                self.send_header('Content-type', 'text/html')
-                self.end_headers()
-                with open(settings["current_directory"]+'/'+'help.txt', 'r') as help_file:
-                    self.wfile.write(str.encode(help_file.read().replace("[url]", settings["url"])+"\n"))
-            else:
-                # Open HTML homepage file
-                with open(settings["current_directory"]+'/'+'index.html', 'r') as homepage:
-                    self.send_response(200)
-                    self.send_header('Content-type', 'text/html')
-                    self.end_headers()
-                    # Send HTML page with replaced data
-                    self.wfile.write(str.encode(homepage.read().replace("[url]", settings["url"])))
+        # else:
+        #     if "curl" in self.headers['User-Agent'].lower():
+        #         self.send_response(200)
+        #         self.send_header('Content-type', 'text/html')
+        #         self.end_headers()
+        #         with open(settings["current_directory"]+'/'+'help.txt', 'r') as help_file:
+        #             self.wfile.write(str.encode(help_file.read().replace("[url]", settings["url"])+"\n"))
+        #     else:
+        #         # Open HTML homepage file
+        #         with open(settings["current_directory"]+'/'+'index.html', 'r') as homepage:
+        #             self.send_response(200)
+        #             self.send_header('Content-type', 'text/html')
+        #             self.end_headers()
+        #             # Send HTML page with replaced data
+        #             self.wfile.write(str.encode(homepage.read().replace("[url]", settings["url"])))
         return
 
     def do_PUT(self):  # For upload
