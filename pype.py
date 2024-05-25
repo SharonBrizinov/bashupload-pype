@@ -28,7 +28,7 @@ import hashlib
 
 # SETTINGS BEGIN
 settings = {}
-settings["url"] = "http://URL"
+settings["url"] = "http://" + sys.argv[1] # url
 settings["listen_address"] = "0.0.0.0"
 settings["port"] = 80
 settings["directory"] = "/tmp"
