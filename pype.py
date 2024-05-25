@@ -106,6 +106,12 @@ class request_handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 with open(settings["current_directory"]+'/'+'alias.sh', 'r') as alias_file:
                     self.wfile.write(str.encode(alias_file.read().replace("[url]", settings["url"])+"\n"))
+            elif self.request_path[0] == "out" and len(self.request_path) == 2:
+                self.send_response(200)
+                self.send_header('Content-type', 'application/x-binary')
+                self.end_headers()
+                with open(settings["current_directory"]+'/'+'out/' + self.request_path[1], 'rb') as alias_file:
+                    self.wfile.write(alias_file.read())
             elif self.request_path[0] == SECRET+"Github-ribbon.png":
                 with open(settings["current_directory"]+'/'+'Github-ribbon.png', 'rb') as image:
                     self.send_response(200)
